@@ -1,1 +1,1 @@
-# claw-graph
+# Claude Harness
