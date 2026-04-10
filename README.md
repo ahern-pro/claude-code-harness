@@ -2,6 +2,7 @@
 
 > 灵感来源 [OpenHarness](https://github.com/HKUDS/OpenHarness) 和 [Claude Code](https://claude.ai/)。
 
+<br>
 Golang 实现的阉割版 [Claude Code](https://claude.ai/)。围绕 LLM 构建完善 Agent 框架。模型提供思考，Harness 实现手、眼睛、记忆和安全边界。
 
 <p align="center">
@@ -34,14 +35,17 @@ AI 应用百花齐放，各种概念层出不穷：
 - 纯 Go 实现终端 UI
 - 无交互模式，直接向 stdout 输出文字或 JSON
 
+<br>
 运行时编排层：
 
 - 组装一个会话所需的所有状态，包括：API 客户端、工具注册表、权限检查器、Hook 执行器、MCP 管理器等
 
+<br>
 Agent 引擎层：
 
 - 实现 Agent Loop — "LLM 推理 → 工具调用 → 结果反馈" 的核心循环。调用【服务层】和【基础设施层】所提供的能力
 
+<br>
 服务层：
 
 - 工具集管理
@@ -54,6 +58,7 @@ Agent 引擎层：
 - 多agent协调
 - 后台 tasks / cron 任务管理
 
+<br>
 基础设施层：
 
 - 多层配置系统
@@ -117,83 +122,62 @@ HandleLine()
 
 ReAct（循环引擎）:
 
-<p><input type="checkbox" checked> 循环调用 Tool，流式传输</p>
-<p><input type="checkbox" checked> 指数避让机制进行 API 重试</p>
-<p><input type="checkbox" checked> 并发调用 Tools</p>
-<p><input type="checkbox" checked disabled> token统计和成本追踪</p>
+- [x] 循环调用 Tool，流式传输
+- [x] 指数避让机制进行 API 重试
+- [x] 并发调用 Tools
+- [x] token统计和成本追踪
 
+<br>
 Toolkit（工具集）:
 
-<p><input type="checkbox" checked disabled> Tools 工具集 (File, Shell, Search, Web, MCP)</p>
-<p><input type="checkbox" checked disabled> 按需加载Skill（.md）</p>
-<p><input type="checkbox" checked disabled> Plugin插件生态（Skills + Hooks + Agents）</p>
-<p><input type="checkbox" checked disabled> 兼容 anthropics/skills & plugins</p>
+- [x] Tools 工具集 (File, Shell, Search, Web, MCP)
+- [x] 按需加载Skill（.md）
+- [x] Plugin插件生态（Skills + Hooks + Agents）
+- [x] 兼容 anthropics/skills & plugins
 
+<br>
 Context & Memory（上下文管理）：
 
-<p><input type="checkbox" disabled> CLAUDE.md 发现与注入</p>
-<p><input type="checkbox" disabled> 2 级上下文压缩</p>
-<p><input type="checkbox" disabled> MEMORY.md 持久化记忆</p>
-<p><input type="checkbox" disabled> 会话恢复与历史记录</p>
+- [ ] CLAUDE.md 发现与注入
+- [ ] 2 级上下文压缩
+- [ ] MEMORY.md 持久化记忆
+- [ ] 会话恢复与历史记录
 
+<br>
 Governance（治理）：
 
-<p><input type="checkbox" disabled> 多级权限模式</p>
-<p><input type="checkbox" disabled> 路径级 & 命</p>
-<p><input type="checkbox" disabled> PreToolUse / PostToolUse 钩子</p>
-<p><input type="checkbox" disabled> 人机协同审批机制</p>
+- [ ] 多级权限模式
+- [ ] 路径级 & 命
+- [ ] PreToolUse / PostToolUse 钩子
+- [ ] 人机协同审批机制
 
+<br>
 Swarm Coordination（调度）：
 
-<p><input type="checkbox" disabled> 子Agent生成与任务委派</p>
-<p><input type="checkbox" disabled> 团队注册与任务管理</p>
-<p><input type="checkbox" disabled> 后台任务生命周期管理</p>
-<p><input type="checkbox" disabled> [ClawTeam](https://github.com/HKUDS/ClawTeam) 集成</p>
+- [ ] 子Agent生成与任务委派
+- [ ] 团队注册与任务管理
+- [ ] 后台任务生命周期管理
+- [ ] [ClawTeam](https://github.com/HKUDS/ClawTeam) 集成
 
 ## 快速开始
 
 // todo
 
-## context管理
-
-### 系统Prompt
-
-### 用户Prompt
-
-### 压缩
-
-- MicroCompact（微型压缩）：
-- LLMCompact（LLM压缩）：
-
-## Memory管理
-
-## ReAct 循环
-
-## tools调用
-
-## hooks
-
-4 种hook事件：
-
-| 事件            | 触发时机     | 典型用途               |
-| ------------- | -------- | ------------------ |
-| session_start | 会话启动时    | 初始化日志、环境检查         |
-| session_end   | 会话关闭时    | 清理资源、发送报告          |
-| pre_tool_use  | 每次工具调用之前 | 拦截/审批危险操作（可阻断工具执行） |
-| post_tool_use | 每次工具调用之后 | 审计日志、通知、结果校验       |
-
 ## Q & A
 
 如何做并发隔离？
 
+<br>
 调用 Tool 一直报错怎么办？
 
-
+<br>
 如何实现 Memory 管理？
+
 - 1、存储: 每个项目的记忆是一组 Markdown 文件 + MEMORY.md 索引，存储在 ~/.openharness/data/memory/{project-hash}/
 - 2、管理: 通过 /memory add|remove|list|show 命令或 LLM 直接写文件进行 CRUD
 - 3、召回: 每次用户输入时，用关键词匹配（标题权重 2x，正文 1x）找到最相关的记忆文件
 - 4、注入: 将 MEMORY.md 索引 + 相关记忆全文注入 system prompt，让 LLM 在推理时能"回忆"起项目上下文
 - 5、无向量化: 采用简单的 token 匹配而非嵌入向量，轻量无依赖
 
+<br>
 如何实现回话中断和恢复？
