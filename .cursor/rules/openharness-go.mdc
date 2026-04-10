@@ -1,0 +1,49 @@
+---
+description: Go implementation of OpenHarness agent harness framework
+alwaysApply: true
+---
+
+# OpenHarness Go Implementation
+
+This project is a Go reimplementation of [OpenHarness](https://github.com/HKUDS/OpenHarness), an open-source Python agent harness framework. Always refer to the upstream Python repo for architectural decisions and feature parity.
+
+## Architecture Mapping
+
+The package layout mirrors OpenHarness's Python modules:
+
+| Go Package     | OpenHarness Python Module | Responsibility                          |
+|----------------|---------------------------|-----------------------------------------|
+| `engine/`      | `engine/`                 | Agent loop: query → stream → tool → loop |
+| `tools/`       | `tools/`                  | Tool registry and execution             |
+| `skills/`      | `skills/`                 | On-demand .md skill loading             |
+| `hooks/`       | `hooks/`                  | PreToolUse / PostToolUse lifecycle       |
+| `commands/`    | `commands/`               | CLI commands and subcommands            |
+| `mcp/`         | `mcp/`                    | Model Context Protocol client           |
+| `memory/`      | `memory/`                 | Persistent cross-session knowledge      |
+| `tasks/`       | `tasks/`                  | Background task management              |
+| `coordinator/` | `coordinator/`            | Multi-agent spawning and coordination   |
+| `prompts/`     | `prompts/`                | System prompt assembly and context      |
+| `config/`      | `config/`                 | Multi-layer config and settings         |
+| `permissions/` | `permissions/`            | Permission modes and path rules         |
+| `ui/`          | `ui/`                     | Terminal UI                             |
+
+## Go Conventions
+
+- Use `interface` to define tool, skill, and hook contracts before writing implementations.
+- Prefer `context.Context` propagation for cancellation and timeouts in the agent loop.
+- Use `error` wrapping with `fmt.Errorf("...: %w", err)` for traceable error chains.
+- Expose package APIs through exported types; keep implementation details unexported.
+- Place integration tests in `_test.go` files alongside the code; use `testify` if needed.
+
+## Key Design Patterns
+
+- **Agent Loop**: The core loop in `engine/` streams LLM responses, dispatches tool calls, and feeds results back — matching OpenHarness's `while True` pattern.
+- **Tool Registry**: Tools in `tools/` implement a common interface with typed input validation and permission checks.
+- **Plugin/Skill Loading**: Skills are `.md` files loaded on demand; keep the loader in `skills/`.
+- **Permission Gating**: Every tool execution passes through `permissions/` before running.
+
+## When Implementing a New Feature
+
+1. Check the corresponding Python module in OpenHarness for design reference.
+2. Define Go interfaces first, then implement.
+3. Keep the package boundary clean — avoid circular imports.
