@@ -172,6 +172,7 @@ Swarm Coordination（调度）：
 - 情况1：执行工具前报错，如权限审批不通过；则直接返回给用户
 - 情况2：执行工具报错，则把错误信息回灌给LLM，由LLM决定下一步调用
 
+
 <br>
 如何实现 Memory 管理？
 - 1、存储: 每个项目的记忆是一组 Markdown 文件 + MEMORY.md 索引，存储在 ~/.openharness/data/memory/{project-hash}/
