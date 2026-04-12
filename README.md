@@ -169,12 +169,14 @@ Swarm Coordination（调度）：
 
 <br>
 调用 Tool 一直报错怎么办？
+
 - 情况1：执行工具前报错，如权限审批不通过；则直接返回给用户
 - 情况2：执行工具报错，则把错误信息回灌给LLM，由LLM决定下一步调用
 
 
 <br>
 如何实现 Memory 管理？
+
 - 1、存储: 每个项目的记忆是一组 Markdown 文件 + MEMORY.md 索引，存储在 ~/.openharness/data/memory/{project-hash}/
 - 2、管理: 通过 /memory add|remove|list|show 命令或 LLM 直接写文件进行 CRUD
 - 3、召回: 每次用户输入时，用关键词匹配（标题权重 2x，正文 1x）找到最相关的记忆文件
@@ -183,5 +185,6 @@ Swarm Coordination（调度）：
 
 <br>
 如何实现回话中断和恢复？
+
 - 重启加载快照，恢复messages列表
 - UI / 通道层面的「打断」
