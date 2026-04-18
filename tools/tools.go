@@ -10,5 +10,7 @@ func CreateDefaultToolRegistry(mcpManager interface{}) *ToolRegistry {
 		tools: make(map[string]Tool),
 	}
 	registry.Register(NewFileReadTool())
+	registry.Register(NewFileWriteTool())
+	registry.Register(NewWebSearchTool())
 	return &registry
 }

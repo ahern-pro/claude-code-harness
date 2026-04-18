@@ -46,7 +46,7 @@ func (frt *FileReadTool) IsReadOnly() bool {
 }
 
 func (frt *FileReadTool) Execute(input any, ctx *ToolExecutionContext) *ToolResult {
-	args, ok := input.(FileReadToolInput)
+	args, ok := input.(*FileReadToolInput)
 	if !ok {
 		return &ToolResult{Output: "Invalid input", IsError: true}
 	}
