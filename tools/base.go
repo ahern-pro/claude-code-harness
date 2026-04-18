@@ -13,17 +13,19 @@ type ToolResult struct {
 
 type BaseTool struct {
 	Name string
+	Description string
+	InputModel map[string]interface{}
 }
 
 type ToolRegistry struct {
-	tools map[string]*BaseTool
+	tools map[string]Tool
 }
 
-func (tr *ToolRegistry) Register(tool *BaseTool) {
-	tr.tools[tool.Name] = tool
+func (tr *ToolRegistry) Register(tool Tool) {
+	tr.tools[tool.Name()] = tool
 }
 
-func (tr *ToolRegistry) Get(name string) *BaseTool {
+func (tr *ToolRegistry) Get(name string) Tool {
 	return tr.tools[name]
 }
 

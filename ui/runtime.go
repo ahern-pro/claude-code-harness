@@ -7,10 +7,12 @@ import (
 	"github.com/li-zeyuan/claude-code-harness/config"
 	"github.com/li-zeyuan/claude-code-harness/engine"
 	"github.com/li-zeyuan/claude-code-harness/prompts"
+	"github.com/li-zeyuan/claude-code-harness/tools"
 )
 
 type RuntimeBundle struct {
-	engine *engine.QueryEngine
+	engine       *engine.QueryEngine
+	toolRegistry *tools.ToolRegistry
 }
 
 func BuildRuntime(prompt string) *RuntimeBundle {
@@ -21,11 +23,15 @@ func BuildRuntime(prompt string) *RuntimeBundle {
 		return nil
 	}
 
+	toolRegistry := tools.CreateDefaultToolRegistry(nil)
+
 	engine := engine.NewQueryEngine(
 		prompts.BuildRuntimeSystemPrompt(settings, cwd, prompt),
+		toolRegistry,
 	)
 	return &RuntimeBundle{
-		engine: engine,
+		engine:       engine,
+		toolRegistry: toolRegistry,
 	}
 }
 

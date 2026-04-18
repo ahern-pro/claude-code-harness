@@ -1,15 +1,20 @@
 package engine
 
-import "github.com/li-zeyuan/claude-code-harness/models"
+import (
+	"github.com/li-zeyuan/claude-code-harness/models"
+	"github.com/li-zeyuan/claude-code-harness/tools"
+)
 
 type QueryEngine struct {
 	systemPrompt string
 	messages     []*models.ConversationMessage
+	toolRegistry *tools.ToolRegistry
 }
 
-func NewQueryEngine(systemPrompt string) *QueryEngine {
+func NewQueryEngine(systemPrompt string, toolRegistry *tools.ToolRegistry) *QueryEngine {
 	return &QueryEngine{
 		systemPrompt: systemPrompt,
+		toolRegistry: toolRegistry,
 	}
 }
 

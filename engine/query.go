@@ -118,14 +118,14 @@ func executeToolCall(queryCtx *QueryContext, toolCall *models.ToolUseBlock) *mod
 	}
 	// 4. 权限校验
 	// 5. 执行工具
-	result, err := tool.Execute(parsedInput, &tools.ToolExecutionContext{
+	result := tool.Execute(parsedInput, &tools.ToolExecutionContext{
 		Cwd: queryCtx.cwd,
 		Metadata: map[string]any{
 			"tool_registry":   queryCtx.toolRegistry,
 			"ask_user_prompt": queryCtx.askUserPrompt,
 		},
 	})
-	if err != nil {
+	if result.IsError {
 		return &models.ToolResultBlock{
 			ToolUseID: toolCall.Id,
 			Content:   fmt.Sprintf("Tool %s execution failed: %s", toolCall.Name, err.Error()),
