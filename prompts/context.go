@@ -7,16 +7,56 @@ import (
 
 	"github.com/li-zeyuan/claude-code-harness/config"
 	"github.com/li-zeyuan/claude-code-harness/memory"
+	"github.com/li-zeyuan/claude-code-harness/skills"
 	"go.uber.org/zap"
 )
+
+func buildSkillSection(cwd string, extraSkillDirs []string, extraPluginRoots []string, settings *config.Settings) (string, error) {
+	registry, err := skills.LoadSkillRegistry(
+		skills.WithCwd(cwd),
+		skills.WithExtraSkillDirs(extraSkillDirs...),
+		skills.WithExtraPluginRoots(extraPluginRoots...),
+		skills.WithSettings(settings),
+	)
+	if err != nil {
+		return "", err
+	}
+
+	skills := registry.GetSkills()
+	if len(skills) == 0 {
+		return "", nil
+	}
+
+	lines := []string{
+		"# Available Skills",
+        "",
+        "The following skills are available via the `skill` tool. ",
+        "When a user's request matches a skill, invoke it with `skill(name=\"<skill_name>\")` ",
+        "to load detailed instructions before proceeding.",
+        "",
+	}
+	for _, skill := range skills {
+		lines = append(lines, fmt.Sprintf("- **%s**: %s", skill.Name, skill.Description))
+	}
+
+	return strings.Join(lines, "\n"), nil
+}
 
 func BuildRuntimeSystemPrompt(
 	settings *config.Settings,
 	cwd string,
 	latestUserPrompt string,
+	extraSkillDirs []string,
+	extraPluginRoots []string,
 ) string {
 
 	sections := make([]string, 0)
+
+	skillsSection, _ := buildSkillSection(cwd, extraSkillDirs, extraPluginRoots, settings)
+	if len(skillsSection) > 0 {
+		// && isCoordinatorMode
+		sections = append(sections, skillsSection)
+	}
 
 	if settings.Memory.Enable {
 		memorySection, err := memory.LoadMemoryPrompt(cwd, settings.Memory.MaxEntrypointLines)
